@@ -122,6 +122,7 @@
     <ClCompile Include="Source\mouse.cpp" />
     <ClCompile Include="Source\texter.cpp" />
     <ClCompile Include="Source\TwodObj.cpp" />
+    <ClCompile Include="unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -131,6 +132,7 @@
     <ClInclude Include="Source\mouse.h" />
     <ClInclude Include="Source\texter.h" />
     <ClInclude Include="Source\TwodObj.h" />
+    <ClInclude Include="unit.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project.rc" />

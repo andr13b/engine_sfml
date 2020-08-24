@@ -50,11 +50,11 @@ void MOUSE_FUNK()
 		{
 			if (MS.lbDown)
 			{
-				ob.rot(1);
+				ob.rotate(1);
 			}
 			if (MS.rbDown)
 			{
-				ob.rot(-1);
+				ob.rotate(-1);
 			}
 		}
 		ob.setCoord(MS.x, MS.y);

@@ -38,7 +38,7 @@
 		{
 			return _tex_list;
 		}
-		void DrawTexture(drawData dt, int wn, int hn);
+		void DrawTexture(drawData dt);
 		void consoleinfo();
 	};
 

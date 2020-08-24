@@ -64,6 +64,9 @@ void TwodObj::setPic(std::string _tex, Drawler &dr)
 	_name = _tex;
 	std::vector<std::string> list = dr.tex_list();
 	bool default_tex = true;
+
+
+
 	int n = std::stoi(list[0]);
 	for (int i = 1; i < list.size(); i += n)
 	{
@@ -73,6 +76,7 @@ void TwodObj::setPic(std::string _tex, Drawler &dr)
 			break;
 		}
 	}
+
 	if (default_tex)
 	{
 		_name = list[1];
@@ -86,12 +90,12 @@ void TwodObj::moveCoord(float defX, float defY)
 	_pao.y += defY;
 }
 
-void TwodObj::setRotation(float angle)
+void TwodObj::setAngle(float angle)
 {
 	_pao.rot = angle;
 }
 
-void TwodObj::rot(float defangle)
+void TwodObj::rotate(float defangle)
 {
 	_pao.rot += defangle;
 	if (_pao.rot > 360)_pao.rot -= 360;
@@ -108,5 +112,5 @@ void TwodObj::draw(Drawler &dr)
 	dt._w = _w;
 	dt._h = _h;
 	dt._name = _name;
-	dr.DrawTexture(dt, _wn, _hn);
+	dr.DrawTexture(dt);
 }

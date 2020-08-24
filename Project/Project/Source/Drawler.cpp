@@ -41,7 +41,7 @@
 			}
 
 		}
-		void Drawler::DrawTexture(drawData dt, int wn, int hn)
+		void Drawler::DrawTexture(drawData dt)
 		{
 			sf::Sprite spr;
 			spr.setPosition(dt._x, dt._y);
