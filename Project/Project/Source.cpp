@@ -32,9 +32,6 @@ Drawler dr(window);//рисовка объектов
 TwodObj ob;//мышь
 
 
-
-
-
 void KEYBOARD_FUNK()
 {
 	while (window.isOpen())
@@ -119,12 +116,6 @@ int main()
 	sf::Thread threadM(&MOUSE_FUNK);
 	threadM.launch();	
 
-	
-	
-
-
-
-
 	//цикл отрисовки
 	while (window.isOpen())
 	{
@@ -135,8 +126,6 @@ int main()
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
-		
-
 		window.clear(sf::Color::White);
 		ob.draw(dr);
 		window.display();

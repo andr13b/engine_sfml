@@ -13,8 +13,8 @@ mouse::~mouse()
 
 void mouse::mouseFunk()
 {
-	MS.x = sf::Mouse::getPosition().x - window.getPosition().x;
-	MS.y = sf::Mouse::getPosition().y - window.getPosition().y;
+	MS.x = sf::Mouse::getPosition().x - window.getPosition().x - 7;
+	MS.y = sf::Mouse::getPosition().y - window.getPosition().y - 30;
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		MS.lbDown = true;

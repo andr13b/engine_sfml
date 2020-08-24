@@ -115,7 +115,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="button.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Source\drawData.cpp" />
     <ClCompile Include="Source\Drawler.cpp" />
@@ -125,7 +124,6 @@
     <ClCompile Include="Source\TwodObj.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="button.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\drawData.h" />
     <ClInclude Include="Source\Drawler.h" />
