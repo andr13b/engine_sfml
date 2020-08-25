@@ -25,10 +25,10 @@
 			_Textures.push_back(tx);
 			_names.push_back(name);		
 			_paths.push_back(path);
-			countOfSprites cs;
+			sizep cs;
 			cs.w = countW;
 			cs.h = countH;
-			_count.push_back(cs);
+			_sizes.push_back(cs);
 		}
 		void Drawler::loadTextures_F(std::string filename, texter & tex)
 		{
@@ -54,15 +54,15 @@
 			if (_names[i] == dt._name)
 			{
 				spr.setTexture(_Textures[i]);
-				int wh = spr.getTextureRect().width / _count[i].w;
-				int hh = spr.getTextureRect().height / _count[i].h;
+				int wh = spr.getTextureRect().width / _sizes[i].w;
+				int hh = spr.getTextureRect().height / _sizes[i].h;
 				spr.setTextureRect(sf::IntRect(0 * wh, 0 * hh, wh, hh));
 				break;
 			}
 			if (i == _names.size() - 1)
 			{
-				int wh = spr.getTextureRect().width / _count[i].w;
-				int hh = spr.getTextureRect().height / _count[i].h;
+				int wh = spr.getTextureRect().width / _sizes[i].w;
+				int hh = spr.getTextureRect().height / _sizes[i].h;
 				spr.setTextureRect(sf::IntRect(0 * wh, 0 * hh, wh, hh));
 				spr.setTexture(_Textures[i]);
 			}

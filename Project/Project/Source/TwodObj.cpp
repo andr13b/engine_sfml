@@ -2,30 +2,30 @@
 #include "TwodObj.h"
 #include "drawData.h"
 
-	
+#define toDegrees 57.2957f
+#define toRadian 0.0174f
+
+
 	
 TwodObj::TwodObj() 
 {
 	_pao.rot = 0;
 }
 
+TwodObj::TwodObj(std::string _tex, Drawler &dr)
+{
+	_pao.rot = 0;
+	setPic(_tex, dr);
+}
 
 TwodObj::~TwodObj()
 {
 
 }
 
-void TwodObj::initS(float x, float y, float scaleX, float scaleY)
-{
-	setCoord(x, y);
-}
 
-void TwodObj::initS(float x, float y, float scale)
-{
-	setCoord(x, y);
-}
 	
-void TwodObj::initWH(float w, float h)
+void TwodObj::setSize(float w, float h)
 {
 	_w = w;
 	_h = h;
@@ -62,11 +62,8 @@ PAO2d TwodObj::getPAO()
 void TwodObj::setPic(std::string _tex, Drawler &dr)
 {
 	_name = _tex;
-	std::vector<std::string> list = dr.tex_list();
+	std::vector<std::string> &list = dr.tex_list();
 	bool default_tex = true;
-
-
-
 	int n = std::stoi(list[0]);
 	for (int i = 1; i < list.size(); i += n)
 	{
@@ -76,18 +73,30 @@ void TwodObj::setPic(std::string _tex, Drawler &dr)
 			break;
 		}
 	}
-
 	if (default_tex)
 	{
 		_name = list[1];
+
 	}
 
 }
 
-void TwodObj::moveCoord(float defX, float defY)
+void TwodObj::move(sf::Vector2f vec)
 {
-	_pao.x += defX;
-	_pao.y += defY;
+	_pao.x += vec.x;
+	_pao.y += vec.y;
+}
+
+void TwodObj::move(float difX, float difY)
+{
+	_pao.x += difX;
+	_pao.y += difY;
+}
+
+void TwodObj::move(float value)
+{
+	_pao.x += value*cosf(_pao.rot * toRadian);
+	_pao.y += value*sinf(_pao.rot * toRadian);
 }
 
 void TwodObj::setAngle(float angle)
@@ -105,9 +114,9 @@ void TwodObj::rotate(float defangle)
 
 void TwodObj::draw(Drawler &dr)
 {
-	drawData dt;
-	dt._x = _pao.x - sqrt(_w*_w + _h*_h)*cos((_pao.rot + 57.29*atan(_h / _w)) / 57.29) / 2;
-	dt._y = _pao.y - sqrt(_w*_w + _h*_h)*sin((_pao.rot + 57.29*atan(_h / _w)) / 57.29) / 2;
+	drawData dt; 
+	dt._x = _pao.x - sqrt(_w*_w + _h*_h)*cosf(_pao.rot* toRadian + atanf(_h / _w)) / 2.0f;
+	dt._y = _pao.y - sqrt(_w*_w + _h*_h)*sinf(_pao.rot* toRadian + atanf(_h / _w)) / 2.0f;
 	dt._rot = _pao.rot;
 	dt._w = _w;
 	dt._h = _h;

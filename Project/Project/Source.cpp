@@ -29,7 +29,7 @@ mouse M(window, MS);
 
 texter T;//зашрузчик файлов
 Drawler dr(window);//рисовка объектов
-TwodObj ob;//мышь
+TwodObj mouseObj;//мышь
 
 
 void KEYBOARD_FUNK()
@@ -50,14 +50,14 @@ void MOUSE_FUNK()
 		{
 			if (MS.lbDown)
 			{
-				ob.rotate(1);
+				mouseObj.rotate(1);
 			}
 			if (MS.rbDown)
 			{
-				ob.rotate(-1);
+				mouseObj.rotate(-1);
 			}
 		}
-		ob.setCoord(MS.x, MS.y);
+		mouseObj.setCoord(MS.x, MS.y);
 		sf::sleep(sf::milliseconds(30));
 	}
 	
@@ -86,9 +86,14 @@ void setup()
 	
 	//замена картини мыши
 	window.setMouseCursorVisible(false);//скрыть мышь
-	ob.setPic("mouse_1", dr);//выбор картинки
-	ob.setCoord(500, 500);//начальная координата
-	ob.initWH(80, 80);//размер мыши
+	mouseObj.setPic("mouse_1", dr);//выбор картинки
+	mouseObj.setCoord(500, 500);//начальная координата
+	mouseObj.setSize(80, 80);//размер мыши
+
+
+	
+
+
 
 	/*
 	//load font
@@ -116,6 +121,12 @@ int main()
 	sf::Thread threadM(&MOUSE_FUNK);
 	threadM.launch();	
 
+	TwodObj obj("tank_1", dr);
+	obj.setSize(80, 50);
+	obj.setCoord(500, 500);
+	obj.setAngle(30);
+
+
 	//цикл отрисовки
 	while (window.isOpen())
 	{
@@ -127,7 +138,13 @@ int main()
 				window.close();
 		}
 		window.clear(sf::Color::White);
-		ob.draw(dr);
+
+		obj.draw(dr);
+		obj.rotate(1.6);
+		obj.move(4.5f);
+		
+
+		mouseObj.draw(dr);
 		window.display();
 		sf::sleep(sf::milliseconds(30));
 	}	

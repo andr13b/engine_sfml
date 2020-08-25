@@ -9,7 +9,7 @@
 
 
 
-	struct countOfSprites
+	struct sizep
 	{
 		int w = 1;
 		int h = 1;
@@ -24,7 +24,7 @@
 		std::vector<std::string> _names;
 		std::vector<std::string> _paths;
 		std::vector<std::string> _tex_list;
-		std::vector<countOfSprites> _count;
+		std::vector<sizep> _sizes;
 		sf::RenderWindow &window;
 	protected:
 		
