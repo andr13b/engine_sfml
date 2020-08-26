@@ -8,18 +8,20 @@
 #include "Source/TwodObj.h"
 #include "Source/keyboard.h"
 #include "Source/mouse.h"
-
+#include "unit.h"
 
 
 #define myWindow 1920,1080
-#define mouseInWindow M.MS.x > window.getPosition().x - 15 && M.MS.x<window.getPosition().x + window.getSize().x + 15 && M.MS.y > window.getPosition().y - 15 && M.MS.y < window.getPosition().y + window.getSize().y + 15
+#define mouseInWindow M.MS.x > wPos.x - 15 && M.MS.x < wPos.x + wSize.x + 15 && M.MS.y > wPos.y - 15 && M.MS.y < wPos.y + wSize.y + 15
 
 
 
 
 //sf::VideoMode(1600, 900), "Window"
 //sf::VideoMode(SM_CXSCREEN, SM_CYSCREEN), "Window", sf::Style::Fullscreen
-sf::RenderWindow window(sf::VideoMode(1600, 900), "Window");
+sf::RenderWindow window(sf::VideoMode(1600, 900), "Window"); 
+sf::Vector2i wPos;
+sf::Vector2u wSize;
 
 
 keyboard K(window);
@@ -29,7 +31,7 @@ mouse M(window, MS);
 
 texter T;//зашрузчик файлов
 Drawler dr(window);//рисовка объектов
-TwodObj mouseObj;//мышь
+TwodObj mouseObj;// объект отображения мыши
 
 
 void KEYBOARD_FUNK()
@@ -46,6 +48,8 @@ void MOUSE_FUNK()
 	while (window.isOpen())
 	{
 		M.mouseFunk();
+		wPos = window.getPosition();
+		wSize = window.getSize();
 		if (mouseInWindow)
 		{
 			if (MS.lbDown)
@@ -86,9 +90,8 @@ void setup()
 	
 	//замена картини мыши
 	window.setMouseCursorVisible(false);//скрыть мышь
-	mouseObj.setPic("mouse_1", dr);//выбор картинки
+	mouseObj.initImage(80, 80, "mouse_1", dr);//выбор картинки
 	mouseObj.setCoord(500, 500);//начальная координата
-	mouseObj.setSize(80, 80);//размер мыши
 
 
 	
@@ -121,10 +124,11 @@ int main()
 	sf::Thread threadM(&MOUSE_FUNK);
 	threadM.launch();	
 
-	TwodObj obj("tank_1", dr);
-	obj.setSize(80, 50);
+	unit obj(60, 50, "tank_1", dr);
 	obj.setCoord(500, 500);
-	obj.setAngle(30);
+	obj.setAngle(0);
+	obj.setupChassey(4, 0.2f);
+	obj.setGoalPAO(mouseObj.getPAO());
 
 
 	//цикл отрисовки
@@ -138,12 +142,9 @@ int main()
 				window.close();
 		}
 		window.clear(sf::Color::White);
-
+		obj.setGoalPAO(mouseObj.getPAO());
+		obj.update();
 		obj.draw(dr);
-		obj.rotate(1.6);
-		obj.move(4.5f);
-		
-
 		mouseObj.draw(dr);
 		window.display();
 		sf::sleep(sf::milliseconds(30));

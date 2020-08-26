@@ -2,20 +2,17 @@
 #include "TwodObj.h"
 #include "drawData.h"
 
-#define toDegrees 57.2957f
-#define toRadian 0.0174f
+
 
 
 	
 TwodObj::TwodObj() 
 {
-	_pao.rot = 0;
 }
 
-TwodObj::TwodObj(std::string _tex, Drawler &dr)
+TwodObj::TwodObj(float w, float h, std::string _tex, Drawler &dr)
 {
-	_pao.rot = 0;
-	setPic(_tex, dr);
+	initImage(w, h, _tex, dr);
 }
 
 TwodObj::~TwodObj()
@@ -23,7 +20,11 @@ TwodObj::~TwodObj()
 
 }
 
-
+void TwodObj::initImage(float w, float h, std::string _tex, Drawler &dr)
+{
+	setPic(_tex, dr);
+	setSize(w, h);
+}
 	
 void TwodObj::setSize(float w, float h)
 {
@@ -95,29 +96,31 @@ void TwodObj::move(float difX, float difY)
 
 void TwodObj::move(float value)
 {
-	_pao.x += value*cosf(_pao.rot * toRadian);
-	_pao.y += value*sinf(_pao.rot * toRadian);
+	_pao.x += value*cosf(_pao.orient * toRadian);
+	_pao.y += value*sinf(_pao.orient * toRadian);
 }
 
 void TwodObj::setAngle(float angle)
 {
-	_pao.rot = angle;
+	_pao.orient = angle;
 }
 
 void TwodObj::rotate(float defangle)
 {
-	_pao.rot += defangle;
-	if (_pao.rot > 360)_pao.rot -= 360;
-	if (_pao.rot < 0)_pao.rot += 360;
+	_pao.orient += defangle;
+	if (_pao.orient > 360)_pao.orient -= 360;
+	if (_pao.orient < 0)_pao.orient += 360;
 }
 
 
 void TwodObj::draw(Drawler &dr)
 {
 	drawData dt; 
-	dt._x = _pao.x - sqrt(_w*_w + _h*_h)*cosf(_pao.rot* toRadian + atanf(_h / _w)) / 2.0f;
-	dt._y = _pao.y - sqrt(_w*_w + _h*_h)*sinf(_pao.rot* toRadian + atanf(_h / _w)) / 2.0f;
-	dt._rot = _pao.rot;
+	//картинка привязана не к краю рамки, а к центру
+	//вращение вокруг центра
+	dt._x = _pao.x - sqrt(_w*_w + _h*_h)*cosf(_pao.orient* toRadian + atanf(_h / _w)) / 2.0f;
+	dt._y = _pao.y - sqrt(_w*_w + _h*_h)*sinf(_pao.orient* toRadian + atanf(_h / _w)) / 2.0f;
+	dt._rot = _pao.orient;
 	dt._w = _w;
 	dt._h = _h;
 	dt._name = _name;
