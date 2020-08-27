@@ -17,7 +17,7 @@ void keyboard::keyboardFUNK()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
 	{
-		window.close();
+		//window.close();
 	}
 	/*
 

@@ -127,7 +127,7 @@ int main()
 	unit obj(60, 50, "tank_1", dr);
 	obj.setCoord(500, 500);
 	obj.setAngle(0);
-	obj.setupChassey(4, 0.2f);
+	obj.setupChassey(4, 0.5);
 	obj.setGoalPAO(mouseObj.getPAO());
 
 
@@ -139,15 +139,21 @@ int main()
 		{
 			// кнопка "выход"
 			if (event.type == sf::Event::Closed)
-				window.close();
+				window.close();			
 		}
-		window.clear(sf::Color::White);
+
+		
+
 		obj.setGoalPAO(mouseObj.getPAO());
 		obj.update();
+
+		window.clear(sf::Color::White);
 		obj.draw(dr);
 		mouseObj.draw(dr);
 		window.display();
 		sf::sleep(sf::milliseconds(30));
 	}	
+	threadK.wait();
+	threadM.wait();
 	return EXIT_SUCCESS;
 }

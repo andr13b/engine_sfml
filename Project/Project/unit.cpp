@@ -39,31 +39,51 @@ void unit::autoChasseyToGoal()
 	if (isActiveGoal)
 	{
 		sf::Vector2f vectorToGoal = goalPAO.vec() - _pao.vec();//вектор до цели
-		float orientToGoal = toDegrees * atan2f(vectorToGoal.y, vectorToGoal.x);//ориентация от юнита до цели
+		float orientToGoal = toDegrees * atan2f(vectorToGoal.y, vectorToGoal.x);//глобальный угол от положения юнита до цели
 		if (orientToGoal < 0)orientToGoal += 360;
 		float difOrient = orientToGoal - _pao.orient;//угол поворота юнита до цели
 		if (difOrient < -180) difOrient += 360;
-		if (difOrient > 180) difOrient -= 360;
+		else if (difOrient > 180) difOrient -= 360;
 		float distanceToGoal = sqrtf(powf(vectorToGoal.x, 2) + powf(vectorToGoal.y, 2));//расстояние до цели
-		if (distanceToGoal > distanceToStop)
+		if (distanceToGoal > 20)
 		{
 			//рекомендованные скорости для гусениц
 			float recSpeedL, recSpeedR;
-			if (difOrient < 0)
+			if (abs(difOrient) < 5)//5
 			{
-				recSpeedR = rightTrack.getMax()*(0.5f + 0.5f*(1 - abs(difOrient) / 180));
-				recSpeedL = (leftTrack.getMax() - leftTrack.getMin())*((1 - abs(difOrient) / 180)) + leftTrack.getMin();
+				recSpeedL = leftTrack.getMax();
+				recSpeedR = rightTrack.getMax();
 			}
 			else
 			{
-				recSpeedL = leftTrack.getMax()*(0.5f + 0.5f*(1 - abs(difOrient) / 180));
-				recSpeedR = (rightTrack.getMax() - rightTrack.getMin())*((1 - abs(difOrient) / 180)) + rightTrack.getMin();
+
+				//recSpeedR = (rightTrack.getMax())*(180.0f - (abs(difOrient))) / (180.0f);
+				//recSpeedL = (leftTrack.getMax())*(180.0f - (abs(difOrient))) / (180.0f);
+				recSpeedR = (rightTrack.getMax())*sqrtf(180.0f - (abs(difOrient))) / sqrtf(180.0f);
+				recSpeedL = (leftTrack.getMax())*sqrtf(180.0f - (abs(difOrient))) / sqrtf(180.0f);
+				if (difOrient < 0)recSpeedL *= -1.0f;
+				else recSpeedR *= -1.0f;
+
+				float additionalSpeed;
+				if (recSpeedR > 0)
+				{
+					additionalSpeed = rightTrack.getMax() - recSpeedR;
+				}
+				else
+				{
+					additionalSpeed = leftTrack.getMax() - recSpeedL;
+				}
+				recSpeedL += additionalSpeed;
+				recSpeedR += additionalSpeed;
 			}
-
-
-			if (recSpeedR > rightTrack.getSpeed())rightTrack.moreForward();
+			if (distanceToGoal < distanceToStop)
+			{
+				recSpeedL *= (distanceToGoal / distanceToStop);
+				recSpeedR *= (distanceToGoal / distanceToStop);
+			}
+			if (recSpeedR >= rightTrack.getSpeed())rightTrack.moreForward();
 			else rightTrack.moreBack();
-			if (recSpeedL > leftTrack.getSpeed())leftTrack.moreForward();
+			if (recSpeedL >= leftTrack.getSpeed())leftTrack.moreForward();
 			else leftTrack.moreBack();
 		}
 		else
@@ -92,3 +112,38 @@ void unit::update()
 	autoChasseyToGoal();
 	tankTrackConvertSpeed();
 }
+
+
+
+
+
+
+
+
+
+/*float k = 1.0f;// 0.2f + 0.8f*distanceToGoal / distanceToStop;//коэффициент замедления от близости к цели
+if (difOrient < 0)
+{
+recSpeedR = rightTrack.getMax()*(0.5f + 0.5f*(1.0f - abs(difOrient) / 180.0f));
+recSpeedL = (leftTrack.getMax() - leftTrack.getMin())*((1.0f - abs(difOrient) / 180.0f));
+if (distanceToGoal < distanceToStop + 50.0f)recSpeedL *= (0.5f + 0.5f*distanceToGoal / (distanceToStop + 50.0f));
+if (distanceToGoal < distanceToStop)
+{
+recSpeedL *= k;
+recSpeedR *= k;
+}
+recSpeedL += leftTrack.getMin();
+}
+else
+{
+recSpeedL = leftTrack.getMax()*(0.5f + 0.5f*(1.0f - abs(difOrient) / 180.0f));
+recSpeedR = (rightTrack.getMax() - rightTrack.getMin())*((1.0f - abs(difOrient) / 180.0f));
+if (distanceToGoal < distanceToStop+50.0f)recSpeedR *= (0.5f + 0.5f*distanceToGoal / (distanceToStop + 50.0f));
+if (distanceToGoal < distanceToStop)
+{
+recSpeedL *= k;
+recSpeedR *= k;
+}
+recSpeedR += rightTrack.getMin();
+}
+*/

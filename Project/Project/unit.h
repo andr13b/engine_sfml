@@ -1,7 +1,7 @@
 #pragma once
 #include "Source\TwodObj.h"
 
-struct tankTrack //параметры одной гусеницы
+struct tankTrack //параметры одной гусеницы 
 {
 private:
 	float currentSpeed;//скорость на данный момент
@@ -30,24 +30,32 @@ public:
 	}
 	void moreForward()
 	{
-		currentSpeed += acceleration;
-		if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
+		if (currentSpeed < 0)toStop();
+		else
+		{
+			currentSpeed += acceleration;
+			if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
+		}
 	}
 	void moreBack()
 	{
-		currentSpeed -= acceleration;
-		if (currentSpeed < minSpeed) currentSpeed = minSpeed;
+		if (currentSpeed > 0)toStop();
+		else
+		{
+			currentSpeed -= acceleration;
+			if (currentSpeed < minSpeed) currentSpeed = minSpeed;
+		}
 	}
 	void toStop()
 	{
 		if (currentSpeed > 0)
 		{
-			if (acceleration < currentSpeed) currentSpeed -= acceleration;
+			if (acceleration * 3 < currentSpeed) currentSpeed -= acceleration * 3;
 			else currentSpeed = 0;
 		}
 		else if (currentSpeed < 0)
 		{
-			if (acceleration < abs(currentSpeed))currentSpeed += acceleration;
+			if (acceleration * 3 < abs(currentSpeed)) currentSpeed += acceleration * 3;
 			else currentSpeed = 0;
 		}
 	}
