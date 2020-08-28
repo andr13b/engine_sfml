@@ -45,25 +45,27 @@ void unit::autoChasseyToGoal()
 		if (difOrient < -180) difOrient += 360;
 		else if (difOrient > 180) difOrient -= 360;
 		float distanceToGoal = sqrtf(powf(vectorToGoal.x, 2) + powf(vectorToGoal.y, 2));//рассто€ние до цели
-		if (distanceToGoal > 20)
+		if (distanceToGoal > GoalRadiusDeviation)
 		{
 			//рекомендованные скорости дл€ гусениц
 			float recSpeedL, recSpeedR;
-			if (abs(difOrient) < 5)//5
+
+			if (abs(difOrient) < GoalAngleDeviation)//5
 			{
 				recSpeedL = leftTrack.getMax();
 				recSpeedR = rightTrack.getMax();
 			}
 			else
 			{
-
+				//"Ќечеткий" доворот к цели по линейной функции
 				//recSpeedR = (rightTrack.getMax())*(180.0f - (abs(difOrient))) / (180.0f);
 				//recSpeedL = (leftTrack.getMax())*(180.0f - (abs(difOrient))) / (180.0f);
+				//"Ќечеткий" доворот к цели по корневой функции
 				recSpeedR = (rightTrack.getMax())*sqrtf(180.0f - (abs(difOrient))) / sqrtf(180.0f);
 				recSpeedL = (leftTrack.getMax())*sqrtf(180.0f - (abs(difOrient))) / sqrtf(180.0f);
 				if (difOrient < 0)recSpeedL *= -1.0f;
 				else recSpeedR *= -1.0f;
-
+				//добавочна€ скорость
 				float additionalSpeed;
 				if (recSpeedR > 0)
 				{
@@ -73,14 +75,17 @@ void unit::autoChasseyToGoal()
 				{
 					additionalSpeed = leftTrack.getMax() - recSpeedL;
 				}
+				//движение вперед на остаточную скорость
 				recSpeedL += additionalSpeed;
 				recSpeedR += additionalSpeed;
 			}
+			//замедление, если близко к цели
 			if (distanceToGoal < distanceToStop)
 			{
 				recSpeedL *= (distanceToGoal / distanceToStop);
 				recSpeedR *= (distanceToGoal / distanceToStop);
 			}
+			//команды на шасси
 			if (recSpeedR >= rightTrack.getSpeed())rightTrack.moreForward();
 			else rightTrack.moreBack();
 			if (recSpeedL >= leftTrack.getSpeed())leftTrack.moreForward();

@@ -18,59 +18,7 @@
 			nvec.y = y;
 			return nvec;
 		}
-#pragma region operators
-		PAO2d operator+=(const sf::Vector2f &term)
-		{
-			PAO2d npao = *this;
-			return npao + term;
-		}
-		PAO2d operator+(const sf::Vector2f &term)
-		{
-			PAO2d npao = *this;
-			npao.x = npao.x + term.x;
-			npao.y = npao.y + term.y;
-			return npao;
-		}
-		PAO2d operator-=(const sf::Vector2f &term)
-		{
-			PAO2d npao = *this;
-			return npao - term;
-		}
-		PAO2d operator-(const sf::Vector2f &term)
-		{
-			PAO2d npao = *this;
-			npao.x = npao.x - term.x;
-			npao.y = npao.y - term.y;
-			return npao;
-		}
-		
-		PAO2d operator+=(const PAO2d &term)
-		{
-			PAO2d npao = *this;
-			return npao + term;
-		}
-		PAO2d operator+(const PAO2d &term)
-		{
-			PAO2d npao = *this;
-			npao.x = npao.x + term.x;
-			npao.y = npao.y + term.y;
-			npao.orient = npao.orient + term.orient;
-			return npao;
-		}
-		PAO2d operator-=(const PAO2d &term)
-		{
-			PAO2d npao = *this;
-			return npao - term;
-		}
-		PAO2d operator-(const PAO2d &term)
-		{
-			PAO2d npao = *this;
-			npao.x = npao.x - term.x;
-			npao.y = npao.y - term.y;
-			npao.orient = npao.orient - term.orient;
-			return npao;
-		}
-#pragma endregion
+
 	};
 
 	//объект для отрисовки спрайта и его перемещения по сцене

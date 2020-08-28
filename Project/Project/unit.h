@@ -1,6 +1,13 @@
 #pragma once
 #include "Source\TwodObj.h"
 
+//константы 
+#define GoalRadiusDeviation 20 
+#define GoalAngleDeviation 10
+
+
+
+
 struct tankTrack //параметры одной гусеницы 
 {
 private:
@@ -30,21 +37,13 @@ public:
 	}
 	void moreForward()
 	{
-		if (currentSpeed < 0)toStop();
-		else
-		{
 			currentSpeed += acceleration;
 			if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
-		}
 	}
 	void moreBack()
 	{
-		if (currentSpeed > 0)toStop();
-		else
-		{
 			currentSpeed -= acceleration;
 			if (currentSpeed < minSpeed) currentSpeed = minSpeed;
-		}
 	}
 	void toStop()
 	{
@@ -100,6 +99,12 @@ public:
 	
 
 	void update();
+
+	
+	unit operator=(unit& inunit)
+	{
+		return *this;
+	}
 
 };
 

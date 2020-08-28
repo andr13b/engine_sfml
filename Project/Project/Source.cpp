@@ -9,6 +9,7 @@
 #include "Source/keyboard.h"
 #include "Source/mouse.h"
 #include "unit.h"
+#include "world.h"
 
 
 #define myWindow 1920,1080
@@ -20,8 +21,8 @@
 //sf::VideoMode(1600, 900), "Window"
 //sf::VideoMode(SM_CXSCREEN, SM_CYSCREEN), "Window", sf::Style::Fullscreen
 sf::RenderWindow window(sf::VideoMode(1600, 900), "Window"); 
-sf::Vector2i wPos;
-sf::Vector2u wSize;
+sf::Vector2i wPos;//положение окна
+sf::Vector2u wSize;//размер окна
 
 
 keyboard K(window);
@@ -124,12 +125,12 @@ int main()
 	sf::Thread threadM(&MOUSE_FUNK);
 	threadM.launch();	
 
-	unit obj(60, 50, "tank_1", dr);
-	obj.setCoord(500, 500);
-	obj.setAngle(0);
-	obj.setupChassey(4, 0.5);
-	obj.setGoalPAO(mouseObj.getPAO());
-
+	world wrld(dr);
+	PAO2d p;
+	p.x = 500;
+	p.y = 500;
+	p.orient = 30;
+	wrld.spawnUnitLine(7, p, 100);
 
 	//цикл отрисовки
 	while (window.isOpen())
@@ -143,12 +144,10 @@ int main()
 		}
 
 		
-
-		obj.setGoalPAO(mouseObj.getPAO());
-		obj.update();
+		wrld.update(mouseObj.getPAO());
 
 		window.clear(sf::Color::White);
-		obj.draw(dr);
+		wrld.draw();
 		mouseObj.draw(dr);
 		window.display();
 		sf::sleep(sf::milliseconds(30));
