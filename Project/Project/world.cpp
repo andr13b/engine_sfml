@@ -24,23 +24,25 @@ void world::setup()
 }
 
 void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
-{
-	std::vector<std::string> loadStr = T.downloadFromFile_Vector(filename);
-	
-	dMap._mapSize.y = atoi(loadStr[0].c_str());
-	dMap._mapSize.x = loadStr.size() / dMap._mapSize.y;
+{	
 	if (dMap.initialyzed)
 	{
 		for (int i = 0; i < dMap._mapSize.x; ++i)delete dMap._M[i];
 		delete dMap._M;
 	}
+	//выгрузка файла
+	std::vector<std::string> loadStr = T.downloadFromFile_Vector(filename);
+	//выставление параметров карты
+	dMap._mapSize.y = atoi(loadStr[0].c_str());
+	dMap._mapSize.x = loadStr.size() / dMap._mapSize.y;
 	dMap._cellSize.x = (float)winsize.x / (float)dMap._mapSize.x;
 	dMap._cellSize.y = (float)winsize.y / (float)dMap._mapSize.y;
+	//выделение памяти
 	dMap._M = new int*[dMap._mapSize.x];
 	for (int i = 0; i < dMap._mapSize.x; ++i)
 	{
 		dMap._M[i] = new int[dMap._mapSize.y];
-		//for (int j = 0; j < dMap._mapSize.x; ++j) dMap._M[i][j] = 0;
+		for (int j = 0; j < dMap._mapSize.y; ++j) dMap._M[i][j] = 0;
 	}
 	dMap.initialyzed = true;
 	int z = 1;//номер читаемого слова
