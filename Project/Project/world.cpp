@@ -2,6 +2,7 @@
 
 
 
+
 world::world(Drawler &d) : dr(d)
 {
 
@@ -10,49 +11,78 @@ world::world(Drawler &d) : dr(d)
 
 world::~world()
 {
+
 }
 
-void world::spawnUnitLine(int amoount, PAO2d leaderpao, float stepBetweenUnit)
+void world::setup()
 {
-	if (amoount > 0)
-	{
-		unit obj(60, 50, "tank_1", dr);
-		obj.setCoord(leaderpao.x, leaderpao.y);
-		obj.setAngle(leaderpao.orient);
-		obj.setupChassey(3, 0.3);
-		//первый юнит
-		unitSquad.push_back(obj);
-		sf::Vector2f stepVector; //вектор - шаг между юнитами
-		stepVector.x = stepBetweenUnit * cosf((leaderpao.orient + 90.0f)*toRadian);
-		stepVector.y = stepBetweenUnit * sinf((leaderpao.orient + 90.0f)*toRadian);
-		int k;//направление шага // +1 или -1
-		if (amoount > 1) for (int i = 1; i <= amoount; ++i)
-		{
-			if (i % 2 == 0) k = 1;
-			else k = -1;
-			leaderpao.x += stepVector.x*i*k;
-			leaderpao.y += stepVector.y*i*k;
-			obj.setCoord(leaderpao.x, leaderpao.y);
-			unitSquad.push_back(obj);
-		}
-	}
+	PAO2d p;
+	p.x = 500;
+	p.y = 500;
+	p.orient = 30;
+	us.spawnUnitLine(7, p, 100, dr);
+}
 
+void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
+{
+	std::vector<std::string> loadStr = T.downloadFromFile_Vector(filename);
+	
+	dMap._mapSize.y = atoi(loadStr[0].c_str());
+	dMap._mapSize.x = loadStr.size() / dMap._mapSize.y;
+	if (dMap.initialyzed)
+	{
+		for (int i = 0; i < dMap._mapSize.x; ++i)delete dMap._M[i];
+		delete dMap._M;
+	}
+	dMap._cellSize.x = (float)winsize.x / (float)dMap._mapSize.x;
+	dMap._cellSize.y = (float)winsize.y / (float)dMap._mapSize.y;
+	dMap._M = new int*[dMap._mapSize.x];
+	for (int i = 0; i < dMap._mapSize.x; ++i)
+	{
+		dMap._M[i] = new int[dMap._mapSize.y];
+		//for (int j = 0; j < dMap._mapSize.x; ++j) dMap._M[i][j] = 0;
+	}
+	dMap.initialyzed = true;
+	int z = 1;//номер читаемого слова
+	//записываем значени€ в €чейки
+	for (int i = 0; i < dMap._mapSize.x; ++i)
+		for (int j = 0; j < dMap._mapSize.y; ++j)
+		{
+			dMap._M[i][j] = atoi(loadStr[z].c_str());
+			z++;
+		}
+	
 }
 
 void world::update(PAO2d goal)
 {
-	for (std::vector<unit>::iterator it = unitSquad.begin(); it != unitSquad.end(); ++it)
-	{
-		(*it).setGoalPAO(goal);
-		(*it).update();
-	}
+	us.update(goal);
+}
 
+
+
+void world::drawMap()
+{
+	for (int i = 0; i < dMap._mapSize.x; ++i)
+		for (int j = 0; j < dMap._mapSize.y; ++j)
+		{
+			switch (dMap._M[i][j])
+			{
+			case 1:
+				dr.drawRectangle(sf::Vector2f(dMap._cellSize.x*i, dMap._cellSize.y*j), dMap._cellSize, sf::Color::Green);
+				break;
+			case 2:
+				dr.drawRectangle(sf::Vector2f(dMap._cellSize.x*i, dMap._cellSize.y*j), dMap._cellSize, sf::Color::Black);
+				break;
+			default:
+				break;
+			}
+		}
 }
 
 void world::draw()
 {
-	for (unit u : unitSquad)
-	{
-		u.draw(dr);
-	}
+	if (dMap.initialyzed)drawMap();
+	us.draw(dr);
 }
+

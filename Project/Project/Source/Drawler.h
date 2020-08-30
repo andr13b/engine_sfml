@@ -39,6 +39,9 @@
 			return _tex_list;
 		}
 		void DrawTexture(drawData dt);
+		void drawLine(sf::Vector2f p1, sf::Vector2f p2, sf::Color color);
+		void drawRectangle(sf::Vector2f pos, sf::Vector2f size, sf::Color color);
+
 		void consoleinfo();
 	};
 

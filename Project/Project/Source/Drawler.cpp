@@ -67,13 +67,27 @@
 				spr.setTexture(_Textures[i]);
 			}
 		}
-		
-
 
 		scaleX = dt._w / spr.getTextureRect().width;
 		scaleY = dt._h / spr.getTextureRect().height;
 		spr.setScale(scaleX, scaleY);
 		window.draw(spr);
+		}
+
+		void Drawler::drawLine(sf::Vector2f p1, sf::Vector2f p2, sf::Color color)
+		{
+			sf::Vertex* line = new sf::Vertex[2];
+			line[0] = sf::Vertex(p1, color);
+			line[1] = sf::Vertex(p2, color);
+			window.draw(line, 2, sf::Lines);
+		}
+
+		void Drawler::drawRectangle(sf::Vector2f pos, sf::Vector2f size, sf::Color color)
+		{
+			sf::RectangleShape rectangle(size);
+			rectangle.setPosition(pos);
+			rectangle.setFillColor(color);
+			window.draw(rectangle);
 		}
 
 		void Drawler::consoleinfo()

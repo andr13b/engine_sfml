@@ -119,18 +119,17 @@ int main()
 {
 	setup();
 
+	world wrld(dr);
+	wrld.loadDiscreteMap("Saves/saveSlot1.dat", window.getSize());
+	wrld.setup();
+
 	//потоки на мышь и клавиатуру	
 	sf::Thread threadK(&KEYBOARD_FUNK);
 	threadK.launch();
 	sf::Thread threadM(&MOUSE_FUNK);
 	threadM.launch();	
 
-	world wrld(dr);
-	PAO2d p;
-	p.x = 500;
-	p.y = 500;
-	p.orient = 30;
-	wrld.spawnUnitLine(7, p, 100);
+	
 
 	//цикл отрисовки
 	while (window.isOpen())
