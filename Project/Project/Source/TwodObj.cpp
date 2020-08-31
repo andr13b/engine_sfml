@@ -6,7 +6,19 @@
 
 
 	
-TwodObj::TwodObj() 
+float TwodObj::getDifAngle(float angleCurrent, float angleNeeded)
+{
+	while (angleCurrent > 360)angleCurrent -= 360;
+	while (angleCurrent < 0)angleCurrent += 360;
+	while (angleNeeded > 360)angleNeeded -= 360;
+	while (angleNeeded < 0)angleNeeded += 360;
+	float difOrient = angleNeeded - angleCurrent;//угол поворота юнита до цели
+	if (difOrient < -180) difOrient += 360;
+	else if (difOrient > 180) difOrient -= 360;
+	return difOrient;
+}
+
+TwodObj::TwodObj()
 {
 }
 

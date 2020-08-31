@@ -30,7 +30,9 @@
 		void setPic(std::string _tex, Drawler &dr);
 		void setSize(float w, float h);
 	protected:
-		PAO2d _pao;//положение и ориентация		
+		PAO2d _pao;//положение и ориентация	
+		//угол, на который нужно повернуться от angleCurrent до angleNeeded
+		float getDifAngle(float angleCurrent, float angleNeeded);
 	public:		
 		 TwodObj();
 		 TwodObj(float w, float h, std::string _tex, Drawler &dr);
@@ -61,4 +63,7 @@
 	
 		void draw(Drawler &dr);
 	};
+
+	
+
 

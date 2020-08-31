@@ -15,7 +15,7 @@ void unitSquad::spawnUnitLine(int amoount, PAO2d leaderpao, float stepBetweenUni
 {
 	if (amoount > 0)
 	{
-		unit obj(60, 50, "tank_1", dr);
+		unit obj(30, 25, "tank_1", dr);
 		obj.setCoord(leaderpao.x, leaderpao.y);
 		obj.setAngle(leaderpao.orient);
 		obj.setupChassey(3, 0.3);

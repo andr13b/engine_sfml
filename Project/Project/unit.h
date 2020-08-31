@@ -6,15 +6,15 @@
 #define GoalAngleDeviation 10
 
 
-
-
-struct tankTrack //параметры одной гусеницы 
+//простейшая модель, соответствующая одной гусеницы 
+class tankTrack
 {
 private:
 	float currentSpeed;//скорость на данный момент
 	float maxSpeed;//граничная скорость вперед (положительное значение)
 	float minSpeed;//граничная скорость назад (отрицательное значение)
 	float acceleration;//ускорение
+
 public:
 	void setupTrack(float _maxSpeed, float _acceleration)
 	{
@@ -37,13 +37,13 @@ public:
 	}
 	void moreForward()
 	{
-			currentSpeed += acceleration;
-			if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
+		currentSpeed += acceleration;
+		if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
 	}
 	void moreBack()
 	{
-			currentSpeed -= acceleration;
-			if (currentSpeed < minSpeed) currentSpeed = minSpeed;
+		currentSpeed -= acceleration;
+		if (currentSpeed < minSpeed) currentSpeed = minSpeed;
 	}
 	void toStop()
 	{
@@ -81,7 +81,10 @@ private:
 	//расстояние торможения
 	float distanceToStop;
 	
-
+	//функции перемещения
+	void stopping();
+	void rotatingTo(float difOrient);
+	void movingTo(float difOrient, float distanceToGoal);
 	//автоуправление шасси 
 	void autoChasseyToGoal();
 	//перевод состояний гусениц в линейную и угловую скорость с дальнейшим перемещением
@@ -109,4 +112,7 @@ public:
 	}
 
 };
+
+
+
 

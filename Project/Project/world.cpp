@@ -17,10 +17,10 @@ world::~world()
 void world::setup()
 {
 	PAO2d p;
-	p.x = 500;
-	p.y = 500;
-	p.orient = 30;
-	us.spawnUnitLine(7, p, 100, dr);
+	p.x = 1350;
+	p.y = 120;
+	p.orient = 90;
+	us.spawnUnitLine(7, p, 55, dr);
 }
 
 void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
@@ -33,8 +33,8 @@ void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
 	//выгрузка файла
 	std::vector<std::string> loadStr = T.downloadFromFile_Vector(filename);
 	//выставление параметров карты
-	dMap._mapSize.y = atoi(loadStr[0].c_str());
-	dMap._mapSize.x = loadStr.size() / dMap._mapSize.y;
+	dMap._mapSize.x = atoi(loadStr[0].c_str());
+	dMap._mapSize.y = loadStr.size() / dMap._mapSize.x;	
 	dMap._cellSize.x = (float)winsize.x / (float)dMap._mapSize.x;
 	dMap._cellSize.y = (float)winsize.y / (float)dMap._mapSize.y;
 	//выделение пам€ти
@@ -47,18 +47,17 @@ void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
 	dMap.initialyzed = true;
 	int z = 1;//номер читаемого слова
 	//записываем значени€ в €чейки
-	for (int i = 0; i < dMap._mapSize.x; ++i)
-		for (int j = 0; j < dMap._mapSize.y; ++j)
+	for (int j = 0; j < dMap._mapSize.y; ++j)
+		for (int i = 0; i < dMap._mapSize.x; ++i)		
 		{
 			dMap._M[i][j] = atoi(loadStr[z].c_str());
 			z++;
-		}
-	
+		}	
 }
 
 void world::update(PAO2d goal)
 {
-	us.update(goal);
+	//us.update(goal);
 }
 
 

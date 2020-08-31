@@ -12,7 +12,7 @@
 #include "world.h"
 
 
-#define myWindow 1920,1080
+//#define myWindow 1920,1080
 #define mouseInWindow M.MS.x > wPos.x - 15 && M.MS.x < wPos.x + wSize.x + 15 && M.MS.y > wPos.y - 15 && M.MS.y < wPos.y + wSize.y + 15
 
 
