@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include "unit.h"
+#include "discreteMap.h"
+
 
 class unitSquad
 {
@@ -10,10 +12,15 @@ public:
 	unitSquad();
 	~unitSquad();
 
-
-
+	
+	
 	void spawnUnitLine(int amoount, PAO2d leaderpao, float stepBetweenUnits, Drawler &dr);
-	void update(PAO2d goal);
+
+	void setupGoals(discreteMap &dMap);
+	void update(discreteMap &dMap);
 	void draw(Drawler &dr);
 };
+
+
+
 

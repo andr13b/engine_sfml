@@ -12,6 +12,8 @@
 #include "world.h"
 
 
+
+
 //#define myWindow 1920,1080
 #define mouseInWindow M.MS.x > wPos.x - 15 && M.MS.x < wPos.x + wSize.x + 15 && M.MS.y > wPos.y - 15 && M.MS.y < wPos.y + wSize.y + 15
 
@@ -94,7 +96,7 @@ void setup()
 	mouseObj.initImage(80, 80, "mouse_1", dr);//выбор картинки
 	mouseObj.setCoord(500, 500);//начальная координата
 
-
+	
 	
 
 
@@ -120,8 +122,10 @@ int main()
 	setup();
 
 	world wrld(dr);
-	wrld.loadDiscreteMap("Saves/saveSlot1.dat", window.getSize());
-	wrld.setup();
+	wrld.setup("Saves/saveSlot1.dat", window.getSize());
+
+	
+
 
 	//потоки на мышь и клавиатуру	
 	sf::Thread threadK(&KEYBOARD_FUNK);
@@ -143,7 +147,7 @@ int main()
 		}
 
 		
-		wrld.update(mouseObj.getPAO());
+		wrld.update();
 
 		window.clear(sf::Color::White);
 		wrld.draw();

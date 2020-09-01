@@ -83,6 +83,15 @@
     <ClInclude Include="unitSquad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="discreteMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Chassis.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AStarSearch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Project.rc">

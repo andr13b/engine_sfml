@@ -14,13 +14,15 @@ world::~world()
 
 }
 
-void world::setup()
+void world::setup(std::string filename, sf::Vector2u winsize)
 {
+	loadDiscreteMap(filename, winsize);
 	PAO2d p;
 	p.x = 1350;
 	p.y = 120;
 	p.orient = 90;
-	us.spawnUnitLine(7, p, 55, dr);
+	us.spawnUnitLine(1, p, 55, dr);
+	us.setupGoals(dMap);
 }
 
 void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
@@ -31,6 +33,7 @@ void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
 		delete dMap._M;
 	}
 	//выгрузка файла
+	texter T;
 	std::vector<std::string> loadStr = T.downloadFromFile_Vector(filename);
 	//выставление параметров карты
 	dMap._mapSize.x = atoi(loadStr[0].c_str());
@@ -55,9 +58,9 @@ void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)
 		}	
 }
 
-void world::update(PAO2d goal)
+void world::update()
 {
-	//us.update(goal);
+	us.update(dMap);
 }
 
 

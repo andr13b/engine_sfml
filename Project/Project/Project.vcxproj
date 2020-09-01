@@ -127,6 +127,9 @@
     <ClCompile Include="world.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AStarSearch.h" />
+    <ClInclude Include="Chassis.h" />
+    <ClInclude Include="discreteMap.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\drawData.h" />
     <ClInclude Include="Source\Drawler.h" />

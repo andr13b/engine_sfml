@@ -1,64 +1,12 @@
 #pragma once
+
 #include "Source\TwodObj.h"
+#include "Chassis.h"
+#include "AStarSearch.h"
 
 //константы 
 #define GoalRadiusDeviation 20 
 #define GoalAngleDeviation 10
-
-
-//простейшая модель, соответствующая одной гусеницы 
-class tankTrack
-{
-private:
-	float currentSpeed;//скорость на данный момент
-	float maxSpeed;//граничная скорость вперед (положительное значение)
-	float minSpeed;//граничная скорость назад (отрицательное значение)
-	float acceleration;//ускорение
-
-public:
-	void setupTrack(float _maxSpeed, float _acceleration)
-	{
-		currentSpeed = 0;
-		acceleration = _acceleration;
-		maxSpeed = _maxSpeed;
-		minSpeed = -_maxSpeed;
-	}
-	float getSpeed()
-	{
-		return currentSpeed;
-	}
-	float getMax()
-	{
-		return maxSpeed;
-	}
-	float getMin()
-	{
-		return minSpeed;
-	}
-	void moreForward()
-	{
-		currentSpeed += acceleration;
-		if (currentSpeed > maxSpeed) currentSpeed = maxSpeed;
-	}
-	void moreBack()
-	{
-		currentSpeed -= acceleration;
-		if (currentSpeed < minSpeed) currentSpeed = minSpeed;
-	}
-	void toStop()
-	{
-		if (currentSpeed > 0)
-		{
-			if (acceleration * 3 < currentSpeed) currentSpeed -= acceleration * 3;
-			else currentSpeed = 0;
-		}
-		else if (currentSpeed < 0)
-		{
-			if (acceleration * 3 < abs(currentSpeed)) currentSpeed += acceleration * 3;
-			else currentSpeed = 0;
-		}
-	}
-};
 
 
 
@@ -74,6 +22,8 @@ private:
 	
 	//целевое положение и орентация
 	PAO2d goalPAO;
+	
+
 
 
 	//есть цель перемещения
@@ -86,7 +36,7 @@ private:
 	void rotatingTo(float difOrient);
 	void movingTo(float difOrient, float distanceToGoal);
 	//автоуправление шасси 
-	void autoChasseyToGoal();
+	void autoChassisToGoal();
 	//перевод состояний гусениц в линейную и угловую скорость с дальнейшим перемещением
 	void tankTrackConvertSpeed();
 
@@ -97,12 +47,13 @@ public:
 
 	//задание параметров гусеничного шасси
 	void setupChassey(float maxSpeed, float acceleration);
+
+	//команды на премещение, изменение стратегии и тд
+	std::list<order> orders;
+	void checkForOrders();
+
 	//задание целевых положения и ориентации
 	void setGoalPAO(PAO2d pao);
-	
-
-	
-
 	void update();
 
 	

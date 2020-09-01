@@ -1,23 +1,9 @@
 #pragma once
-#include "unitSquad.h"
+
 #include <string>
+#include "unitSquad.h"
 
-/*
-дискретна€ карта, 
-*/
-struct discreteMap
-{
-	int **_M;//массив €чеек//0 - нет объектов, 1 - дорога, 2 - преп€тствие
-	sf::Vector2i _mapSize;//размерность карты в €чейках
-	sf::Vector2f _cellSize;//размер €чейки дискретной карты
-	//создание пустой дискретной карты определенного размера в пределах окна
 
-	void init(sf::Vector2i mapSize, sf::Vector2u windowSize)
-	{
-		
-	}
-	bool initialyzed = false;
-};
 
 
 /*
@@ -31,24 +17,34 @@ private:
 
 	discreteMap dMap;//дискретна€ карта
 
-	texter T;
+	
+	
 	
 	void drawMap();
-
+	void loadDiscreteMap(std::string filename, sf::Vector2u winsize);//загрузка карты
 	
 
 public:
 	
 	world(Drawler &d);
 	~world();
-	void setup();
-	void loadDiscreteMap(std::string filename, sf::Vector2u winsize);
+	/*
+	
+	
+	*/
+	void setup(std::string filename, sf::Vector2u winsize);
+	
 
-	void update(PAO2d goal);
+	/*
+	итераци€ обновлени€ объектов мира
+	*/
+	void update();
 
 	
 
-
+	/*
+	вывод на окно
+	*/
 	void draw();
 };
 

@@ -36,13 +36,33 @@ void unitSquad::spawnUnitLine(int amoount, PAO2d leaderpao, float stepBetweenUni
 		}
 	}
 
+	
+
 }
 
-void unitSquad::update(PAO2d goal)
+void unitSquad::setupGoals(discreteMap & dMap)
 {
+	std::vector<int> growCells;
+	growCells.push_back(0);
+	growCells.push_back(1);
+	std::vector<int> obstacleCells;
+	obstacleCells.push_back(2);
+	AStar AS(dMap);
 	for (std::vector<unit>::iterator it = units.begin(); it != units.end(); ++it)
 	{
-		(*it).setGoalPAO(goal);
+		(*it).orders = AS.searchPath(dMap.cellNum(sf::Vector2f((*it).getX(), (*it).getY())), sf::Vector2i(52, 23), growCells, obstacleCells);
+	}
+}
+
+void unitSquad::update(discreteMap &dMap)
+{
+	
+	
+
+
+	for (std::vector<unit>::iterator it = units.begin(); it != units.end(); ++it)
+	{
+		//(*it).setGoalPAO(goal);
 		(*it).update();
 	}
 

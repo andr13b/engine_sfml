@@ -25,6 +25,20 @@ void unit::setupChassey(float maxSpeed, float acceleration)
 	distanceToStop = 0.5f*(maxSpeed + maxSpeed*maxSpeed / acceleration);
 }
 
+void unit::checkForOrders()
+{
+	if (!orders.empty()&&!isActiveGoal)
+	{
+		order ord = orders.front();
+		if (ord._type == "move")
+		{
+			goalPAO = ord._pao;
+			isActiveGoal = true;
+		}
+		orders.pop_front();
+	}
+}
+
 void unit::setGoalPAO(PAO2d pao)
 {
 	isActiveGoal = true;
@@ -98,8 +112,9 @@ void  unit::movingTo(float difOrient, float distanceToGoal)
 	else leftTrack.moreBack();
 }
 
-void unit::autoChasseyToGoal()
+void unit::autoChassisToGoal()
 {
+	
 	if (isActiveGoal)
 	{
 		sf::Vector2f vectorToGoal = goalPAO.vec() - _pao.vec();//вектор до цели		
@@ -116,6 +131,11 @@ void unit::autoChasseyToGoal()
 		}
 		else
 		{
+			isActiveGoal = false;
+		}
+		/*
+		else
+		{
 			difOrient = getDifAngle(_pao.orient, goalPAO.orient);
 			if (abs(difOrient) > GoalAngleDeviation)
 			{
@@ -123,14 +143,22 @@ void unit::autoChasseyToGoal()
 			}
 			else
 			{
+				isActiveGoal = false;
 				stopping();
 			}
-		}		
+		}
+		*/
 	}
 	else
 	{
 		stopping();
 	}
+	
+
+
+
+
+
 }
 
 void unit::tankTrackConvertSpeed()
@@ -143,7 +171,8 @@ void unit::tankTrackConvertSpeed()
 
 void unit::update()
 {	
-	autoChasseyToGoal();
+	checkForOrders();
+	autoChassisToGoal();
 	tankTrackConvertSpeed();
 }
 
