@@ -23,7 +23,7 @@ void world::setup(std::string filename, sf::Vector2u winsize)
 	p.x = 1350;
 	p.y = 120;
 	p.orient = 90;
-	us.spawnUnitLine(6, p, 55, dr);
+	us.spawnUnitLine(3, p, 55, dr);
 	//постановка задач
 	order ord;
 	ord._pao.orient = -90;

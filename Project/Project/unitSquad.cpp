@@ -11,6 +11,13 @@ unitSquad::~unitSquad()
 {
 }
 
+
+/*
+создание линии юнитов
+amount - количество
+leaderpao - положение и ориентация центрального юнита
+stepBetweenUnit - расстояние между юнитами
+*/
 void unitSquad::spawnUnitLine(int amoount, PAO2d leaderpao, float stepBetweenUnit, Drawler &dr)
 {
 	if (amoount > 0)
@@ -123,7 +130,10 @@ void unitSquad::readOrders(discreteMap & dMap)
 				leaderpao.x += stepVector.x*i*k;
 				leaderpao.y += stepVector.y*i*k;
 				//!!!!!!!!!//
-				uorders = AS.searchPath(dMap.cellNum((*it).getPAO().vec()), dMap.cellNum(leaderpao.vec()), growCells, obstacleCells);				
+				uorders = AS.searchPath(dMap.cellNum((*it).getPAO().vec()), dMap.cellNum(leaderpao.vec()), growCells, obstacleCells);		
+				uord._pao = leaderpao;
+				uord._type = "move";
+				uorders.push_back(uord);
 				(*it).setGoalPath(uorders);
 				
 				i++;
