@@ -18,6 +18,12 @@ unit::~unit()
 
 }
 
+bool unit::isBusy()
+{
+	if (!path.empty() || ActiveGoal)return true;
+	else return false;
+}
+
 void unit::setupChassey(float maxSpeed, float acceleration)
 {
 	leftTrack.setupTrack(maxSpeed, acceleration);
@@ -25,24 +31,39 @@ void unit::setupChassey(float maxSpeed, float acceleration)
 	distanceToStop = 0.5f*(maxSpeed + maxSpeed*maxSpeed / acceleration);
 }
 
-void unit::checkForOrders()
+void unit::checkPath()
 {
-	if (!orders.empty()&&!isActiveGoal)
+	if (!path.empty()&&!ActiveGoal)
 	{
-		order ord = orders.front();
-		if (ord._type == "move")
+		order ord = path.front();
+		typeState = ord._type;
+		if (ord._type == "move" || ord._type == "rotate")
 		{
 			goalPAO = ord._pao;
-			isActiveGoal = true;
+			ActiveGoal = true;
 		}
-		orders.pop_front();
+		path.pop_front();
 	}
 }
 
-void unit::setGoalPAO(PAO2d pao)
+void unit::setGoalPath(std::list<order> orders)
 {
-	isActiveGoal = true;
-	goalPAO = pao;
+	path = orders;
+}
+
+void unit::addGoalPath(std::list<order> orders)
+{
+	if (!orders.empty())path.insert(path.end(), orders.begin(), orders.end());
+}
+
+void unit::addGoalPath(order order)
+{
+	path.push_back(order);
+}
+
+void unit::clearGoalPath()
+{
+	path.clear();
 }
 
 
@@ -112,54 +133,120 @@ void  unit::movingTo(float difOrient, float distanceToGoal)
 	else leftTrack.moreBack();
 }
 
-void unit::autoChassisToGoal()
+void unit::autoChassisToGoal(std::vector<unit> &units, discreteMap &dMap)
 {
-	
-	if (isActiveGoal)
-	{
-		sf::Vector2f vectorToGoal = goalPAO.vec() - _pao.vec();//вектор до цели		
-		float orientToGoal = toDegrees * atan2f(vectorToGoal.y, vectorToGoal.x);//глобальный угол от положения юнита до цели
-		//рекомендованные скорости для гусениц
-		float recSpeedL, recSpeedR;
-		//угол доворота к цели
-		float difOrient = getDifAngle(_pao.orient, orientToGoal);
+	sf::Vector2f vectorToGoal;//вектор до цели	
+	sf::Vector2f vecRange;//вектор рассчета расстояний между элементами
+	float range; // расстояние между двумя элементами
+	float orientToGoal;//глобальный угол от положения юнита до цели
+	//рекомендованные скорости для гусениц
+	float recSpeedL, recSpeedR;
+	float difOrient;//угол доворота к цели
+	float distanceToGoal;//расстояние до цели
+	float RD = GoalRadiusDeviation; //radius deviation - погрешность или допустимое расстояние
 
-		float distanceToGoal = sqrtf(powf(vectorToGoal.x, 2) + powf(vectorToGoal.y, 2));//расстояние до цели
-		if (distanceToGoal > GoalRadiusDeviation)
+	if (typeState == "follow")
+	{
+		for (unit u : units)
+		{
+			if (u.num == num - 1)
+			{
+				goalPAO = u._pao;
+				RD = followUnitRadius;
+			}
+			/*if (u.num < num)
+			{
+				vecRange = _pao.vec() - u._pao.vec();
+				range = sqrtf(powf(vecRange.x, 2) + powf(vecRange.y, 2));
+				if (range < influenceUnitRadius)
+				{
+					stopping();
+					ActiveGoal = false;
+					return;
+				}
+			}*/
+		}
+	}
+
+	if (typeState == "move"|| typeState == "follow")
+	{
+		sf::Vector2i posInMap = dMap.cellNum(_pao.vec());//положение в дискретной карте
+		sf::Vector2i posNear;//соседняя ячейка
+		sf::Vector2f obsReject;//ветор отталкивания от препятствий
+		obsReject.x = 0;
+		obsReject.y = 0;
+		//проверка на сближение с другими юнитами
+		for (unit u : units)
+			if (u.num < num) if (!u.isBusy() || u.getState() != "follow")
+			{
+				vecRange = _pao.vec() - u._pao.vec();
+				range = sqrtf(powf(vecRange.x, 2) + powf(vecRange.y, 2));
+				if (range < obstacleUnitRadius)
+				{
+					stopping();
+					//ActiveGoal = false;
+					return;
+				}
+			}
+			else if (u.num != num)
+			{
+				vecRange = _pao.vec() - u._pao.vec();
+				range = sqrtf(powf(vecRange.x, 2) + powf(vecRange.y, 2));
+				if (range < influenceUnitRadius) obsReject += normalise(_pao.vec() - u._pao.vec());
+			}		
+		//расстояние до цели
+		vectorToGoal = goalPAO.vec() - _pao.vec();	
+		distanceToGoal = sqrtf(powf(vectorToGoal.x, 2) + powf(vectorToGoal.y, 2));
+		//просмотр препятствий неподалеку		
+		for (int i = -1; i <= 1; ++i)
+			for (int j = -1; j <= 1; ++j) if (j != 0 || i != 0)
+			{
+				posNear.x = posInMap.x + i;
+				posNear.y = posInMap.y + j;
+				if (dMap.inBorders(posNear)) if (dMap._M[posNear.x][posNear.y] == 2)
+				{
+					obsReject += normalise(posInMap - posNear);
+				}
+			}
+		vectorToGoal = normalise(vectorToGoal);
+		vectorToGoal += obsReject;
+		//выбор ориентации
+		orientToGoal = toDegrees * atan2f(vectorToGoal.y, vectorToGoal.x);		
+		difOrient = getDifAngle(_pao.orient, orientToGoal);
+		
+		if (distanceToGoal > RD)
 		{
 			movingTo(difOrient, distanceToGoal);
+			ActiveGoal = true;
 		}
 		else
 		{
-			isActiveGoal = false;
+			stopping();
+			ActiveGoal = false;
 		}
-		/*
-		else
-		{
-			difOrient = getDifAngle(_pao.orient, goalPAO.orient);
-			if (abs(difOrient) > GoalAngleDeviation)
-			{
-				rotatingTo(difOrient);
-			}
-			else
-			{
-				isActiveGoal = false;
-				stopping();
-			}
-		}
-		*/
-	}
-	else
+	}	
+	if (typeState == "rotate")
 	{
-		stopping();
+		difOrient = getDifAngle(_pao.orient, goalPAO.orient);
+		if (abs(difOrient) > GoalAngleDeviation)
+		{
+			rotatingTo(difOrient);
+			ActiveGoal = true;
+		}
+		else
+		{			
+			stopping();
+			ActiveGoal = false;
+		}
 	}
 	
 
-
-
-
+	
 
 }
+
+
+
 
 void unit::tankTrackConvertSpeed()
 {
@@ -169,18 +256,37 @@ void unit::tankTrackConvertSpeed()
 	move(linearSpeed);
 }
 
-void unit::update()
+void unit::update(std::vector<unit> &units, discreteMap &dMap)
 {	
-	checkForOrders();
-	autoChassisToGoal();
+	//checkPath();
+	autoChassisToGoal(units, dMap);
 	tankTrackConvertSpeed();
+}
+
+std::string unit::getState()
+{
+	return typeState;
 }
 
 
 
 
 
-
+/*
+else
+{
+difOrient = getDifAngle(_pao.orient, goalPAO.orient);
+if (abs(difOrient) > GoalAngleDeviation)
+{
+rotatingTo(difOrient);
+}
+else
+{
+isActiveGoal = false;
+stopping();
+}
+}
+*/
 
 
 

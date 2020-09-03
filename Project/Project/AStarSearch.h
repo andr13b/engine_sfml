@@ -10,8 +10,9 @@
 //приказ для изменения поведения, положения и тд.
 struct order
 {
-	std::string _type;
-	PAO2d _pao;
+	std::string _type;//тип приказа
+	PAO2d _pao;//положение и ориентация
+	float val;//значение
 };
 
 /*узел*/
@@ -36,13 +37,20 @@ private:
 	std::map<std::string, node> tree;//дерево исследованных узлов
 	std::list<std::string> searchList;//порядок индексов узлов дерева, по которым будет проходить поиск
 	
-
 	std::string vecToString(sf::Vector2i vec)
 	{
 		return std::to_string(vec.x) + " " + std::to_string(vec.y);
 	}
 
-
+	//нет препятствий в соседних ячейках
+	bool noObstaclesNear(sf::Vector2i index, std::vector<int> obstacle)
+	{
+		if (dMap.inBorders(sf::Vector2i(index.x + 1, index.y))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[index.x + 1][index.y]) != obstacle.end())return false;
+		if (dMap.inBorders(sf::Vector2i(index.x - 1, index.y))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[index.x - 1][index.y]) != obstacle.end())return false;
+		if (dMap.inBorders(sf::Vector2i(index.x, index.y + 1))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[index.x][index.y + 1]) != obstacle.end())return false;
+		if (dMap.inBorders(sf::Vector2i(index.x, index.y - 1))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[index.x][index.y - 1]) != obstacle.end())return false;
+		return true;
+	}
 
 public:
 	AStar(discreteMap &d) : dMap(d){}
@@ -61,9 +69,9 @@ public:
 		//если за пределами дискретной карты
 		if (!dMap.inBorders(goalCell) || !dMap.inBorders(rootCell))return path;
 		node n;//узел в некоторый момент времени
-		std::string index = vecToString(rootCell);//индекс в некоторый момент времени
+		std::string indexStr = vecToString(rootCell);//индекс в некоторый момент времени
 		node nParent;//родительский узел в некоторый момент времени
-		std::string parentIndex;//родительский индекс в некоторый момент времени
+		std::string parentIndexStr;//родительский индекс в некоторый момент времени
 		
 		sf::Vector2i range;//расстояние до цели в момент времени
 		
@@ -73,58 +81,49 @@ public:
 		n.costFunc = n.costWay + sqrtf(range.x * range.x + range.y * range.y);
 		n.index = rootCell;
 		n.parentIndex = "none";
-		tree.insert(std::pair<std::string, node>(index, n));//добавляем в дерево
-		searchList.push_back(index);//добавляем в очередь исследования
+		tree.insert(std::pair<std::string, node>(indexStr, n));//добавляем в дерево
+		searchList.push_back(indexStr);//добавляем в очередь исследования
 
 		
 		bool goalFound = false;//цель найдена
 		bool addedToList = false;//индекс ячейки добавлен в очередь исследования
-
-		bool additional = false;
-
 		while (!searchList.empty() && !goalFound)
 		{
-			parentIndex = searchList.front();
+			parentIndexStr = searchList.front();
 			searchList.pop_front();
 
-			nParent = tree[parentIndex];
+			nParent = tree[parentIndexStr];
 			//+-1 просмотр ячеек
 			for (int i = -1; i <= 1 && !goalFound; ++i)
 				for (int j = -1; j <= 1 && !goalFound; ++j) if (j != 0 || i != 0)
 				{
 					n.index.x = nParent.index.x + i;
 					n.index.y = nParent.index.y + j;
-					index = vecToString(n.index);
+					indexStr = vecToString(n.index);
 					if (dMap.inBorders(n.index))
-						if (tree.find(index) == tree.end())
+						if (tree.find(indexStr) == tree.end())
 							if (std::find(canGrow.begin(), canGrow.end(), dMap._M[n.index.x][n.index.y]) != canGrow.end())
 							{
-								//additional part of algorythm
-								additional = false;
-								if (dMap.inBorders(sf::Vector2i(n.index.x + 1, n.index.y))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[n.index.x + 1][n.index.y]) != obstacle.end())additional = true;
-								if (dMap.inBorders(sf::Vector2i(n.index.x - 1, n.index.y))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[n.index.x - 1][n.index.y]) != obstacle.end())additional = true;
-								if (dMap.inBorders(sf::Vector2i(n.index.x, n.index.y + 1))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[n.index.x][n.index.y + 1]) != obstacle.end())additional = true;
-								if (dMap.inBorders(sf::Vector2i(n.index.x, n.index.y - 1))) if (std::find(obstacle.begin(), obstacle.end(), dMap._M[n.index.x][n.index.y - 1]) != obstacle.end())additional = true;
-								if (!additional)
+								if (noObstaclesNear(n.index, obstacle))
 								{
-									n.parentIndex = parentIndex;
+									n.parentIndex = parentIndexStr;
 									range = n.index - nParent.index;//расстояние между узлами
 									n.costWay = nParent.costWay + sqrtf(range.x * range.x + range.y * range.y);
 									range = goalCell - n.index;//расстояние между узлом и целью
 									n.costFunc = n.costWay + sqrtf(range.x * range.x + range.y * range.y);
-									tree.insert(std::pair<std::string, node>(index, n));//добавляем в дерево
+									tree.insert(std::pair<std::string, node>(indexStr, n));//добавляем в дерево
 									addedToList = false;
 									//добавление в очередь поиска
 									for (std::list<std::string>::iterator it = searchList.begin(); it != searchList.end(); ++it)
 									{
 										if (n.costFunc < tree[(*it)].costFunc)
 										{
-											searchList.insert(it, index);
+											searchList.insert(it, indexStr);
 											addedToList = true;
 											break;
 										}
 									}
-									if (!addedToList) searchList.push_back(index);
+									if (!addedToList) searchList.push_back(indexStr);
 									//проверка на соответствие цели
 									if (n.index == goalCell) goalFound = true;
 								}
@@ -140,21 +139,21 @@ public:
 			o._type = "move";
 			o._pao.orient = 0;
 			//последнее перемещение
-			index = vecToString(goalCell);
-			n = tree[index];
+			indexStr = vecToString(goalCell);
+			n = tree[indexStr];
 			pos = dMap.cellCentre(n.index);
 			o._pao.x = pos.x;
 			o._pao.y = pos.y;
 			path.push_front(o);
-			index = n.parentIndex;
-			while (index != "none")
+			indexStr = n.parentIndex;
+			while (indexStr != "none")
 			{				
-				n = tree[index];
+				n = tree[indexStr];
 				pos = dMap.cellCentre(n.index);
 				o._pao.x = pos.x;
 				o._pao.y = pos.y;
 				path.push_front(o);
-				index = n.parentIndex;
+				indexStr = n.parentIndex;
 			}
 			
 		}

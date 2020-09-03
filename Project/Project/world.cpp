@@ -16,13 +16,39 @@ world::~world()
 
 void world::setup(std::string filename, sf::Vector2u winsize)
 {
+	//загрузка карты 
 	loadDiscreteMap(filename, winsize);
+	//спавн объектов
 	PAO2d p;
 	p.x = 1350;
 	p.y = 120;
 	p.orient = 90;
-	us.spawnUnitLine(1, p, 55, dr);
-	us.setupGoals(dMap);
+	us.spawnUnitLine(6, p, 55, dr);
+	//постановка задач
+	order ord;
+	ord._pao.orient = -90;
+	ord._type = "moveConvey";
+	ord._pao.x = 1390;
+	ord._pao.y = 600;
+	us.addOrder(ord);
+	ord._type = "moveConveyR";
+	ord._pao.x = 220;
+	ord._pao.y = 600;
+	us.addOrder(ord);
+	ord._type = "runLine";
+	ord.val = 100;
+	ord._pao.orient = -90;
+	ord._pao.x = 430;
+	ord._pao.y = 140;
+	us.addOrder(ord);
+	ord._type = "rotate";
+	ord._pao.orient = -90;
+	ord._pao.x = 430;
+	ord._pao.y = 140;
+	us.addOrder(ord);
+
+	
+
 }
 
 void world::loadDiscreteMap(std::string filename, sf::Vector2u winsize)

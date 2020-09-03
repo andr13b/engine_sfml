@@ -153,7 +153,7 @@ int main()
 		wrld.draw();
 		mouseObj.draw(dr);
 		window.display();
-		sf::sleep(sf::milliseconds(30));
+		sf::sleep(sf::milliseconds(5));
 	}	
 	threadK.wait();
 	threadM.wait();

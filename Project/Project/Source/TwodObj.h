@@ -6,6 +6,8 @@
 #define toRadian 0.0174f
 
 	
+
+
 	//position and orientation - положение и ориентация 
 	struct PAO2d
 	{
@@ -34,6 +36,7 @@
 		PAO2d _pao;//положение и ориентация	
 		//угол, на который нужно повернуться от angleCurrent до angleNeeded
 		float getDifAngle(float angleCurrent, float angleNeeded);
+
 	public:		
 		 TwodObj();
 		 TwodObj(float w, float h, std::string _tex, Drawler &dr);
@@ -63,6 +66,23 @@
 		void rotate(float defangle);
 	
 		void draw(Drawler &dr);
+
+
+		sf::Vector2f normalise(sf::Vector2f vin)
+		{
+			float lenght = sqrt(vin.x*vin.x + vin.y*vin.y);
+			vin.x /= lenght;
+			vin.y /= lenght;
+			return vin;
+		}
+		sf::Vector2f normalise(sf::Vector2i vin)
+		{
+			sf::Vector2f vout;
+			float lenght = sqrt(vin.x*vin.x + vin.y*vin.y);
+			vout.x = (float)vin.x / lenght;
+			vout.y = (float)vin.y / lenght;
+			return vout;
+		}
 	};
 
 	
